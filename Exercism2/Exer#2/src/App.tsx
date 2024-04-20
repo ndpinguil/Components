@@ -1,34 +1,50 @@
 import React from 'react';
-import './App.css';
-export enum ResistorValues {
-  black = 0,
-  brown = 1,
-  red = 2,
-  orange = 3,
-  yellow = 4,
-  green = 5,
-  blue = 6,
-  violet = 7,
-  grey = 8,
-  white = 9
+
+interface ResistorColorProps {
+  colors: string[];
 }
 
-type Color = keyof typeof ResistorValues;
+const ResistorColor: React.FC<ResistorColorProps> = ({ colors }) => {
+  const decodedResistorValue = (colors: string[]): string => {
+    const [color1, color2, color3] = colors;
+    const colorMap: { [color: string]: number } = {
+      'black': 0,
+      'brown': 1,
+      'red': 2,
+      'orange': 3,
+      'yellow': 4,
+      'green': 5,
+      'blue': 6,
+      'violet': 7,
+      'grey': 8,
+      'white': 9,
+    };
 
-export function decodedValue(first: Color, second: Color): number {
-  return Number(`${ResistorValues[first]}${ResistorValues[second]}`);
-}
+    const mainValue = colorMap[color1] * 10 + colorMap[color2];
+    let valueInOhms: string = '';
 
-const ResistorDecoder: React.FC = () => {
-  // Ejemplo de uso
-  const value = decodedValue('brown', 'black');
+    if (color3 === 'black') {
+      valueInOhms = `${mainValue} ohms`;
+    } else if (color3 === 'green') {
+      valueInOhms = `${mainValue * 1000} ohms`;
+    } else if (color3 === 'blue') {
+      valueInOhms = `${mainValue * 1000000} ohms`;
+    } else if (color3 === 'violet') {
+      valueInOhms = `${mainValue * 1000000000} ohms`;
+    }
+
+    if (valueInOhms === '') {
+      throw new Error('Invalid color');
+    }
+
+    return valueInOhms;
+  };
 
   return (
     <div>
-      <h2>Valor decodificado del resistor:</h2>
-      <p>{value}</p>
+      <p>{decodedResistorValue(colors)}</p>
     </div>
   );
 };
 
-export default ResistorDecoder;
+export default ResistorColor;
